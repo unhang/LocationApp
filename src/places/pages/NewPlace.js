@@ -1,41 +1,16 @@
-import React, { useCallback, useReducer } from 'react';
+import React from 'react';
 
+import { useForm } from '../../shared/hooks/form-hook'
 import Input from '../../shared/components/FormElements/Input';
 import Button from '../../shared/components/FormElements/Button';
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from '../../shared/util/validators';
-import './NewPlace.css';
+import './PlaceForm.css';
 
-const formReducer = (state, action) => {
-  switch (action.type) {
-    case 'INPUT_CHANGE':
-      let isFormValid = true;
-      for (const inputId in state.inputs) {
-        if (inputId === action.inputId) {
-          console.log(inputId);
-          isFormValid = isFormValid && action.isValid
-        } else {
-          isFormValid = isFormValid && state.inputs[inputId].isValid
-        }
-      }
-      return {
-        ...state,
-        inputs: {
-          ...state.inputs,
-          [action.inputId]: {
-            value: action.val,
-            isValid: action.isValid
-          }
-        },
-        isValid: isFormValid
-      }
-    default:
-      return state
-  }
-}
+
 
 const NewPlace = () => {
-  const [formState, dispatch] = useReducer(formReducer, {
-    inputs: {
+
+  const initialInput = {
       title: {
         value: '',
         isValid: false
@@ -43,16 +18,16 @@ const NewPlace = () => {
       description: {
         value: '',
         isValid: false
+      },
+      address: {
+        value: '',
+        isValid: false
       }
-    },
-    isValid: false
-  });
+  }
+  const initialFormValidity  = false;
+  const [formState, inputHandler] = useForm(initialInput,initialFormValidity);
 
-  const inputHandler = useCallback((id, value, isValid) => {
-    dispatch({type: 'INPUT_CHANGE', inputId: id, val: value, isValid: isValid})
-  }, []);
-
-  const placeSubmitHandler = event => {
+  const placeSubmitHandler = event => { 
     event.preventDefault();
     console.log(formState.inputs);
   }
@@ -76,7 +51,7 @@ const NewPlace = () => {
       validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
       onInput={inputHandler}
     />
-    <Input 
+    <Input
       id="address"
       element="input"
       type="text"
