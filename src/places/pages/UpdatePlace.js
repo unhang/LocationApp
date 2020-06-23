@@ -54,7 +54,6 @@ const UpdatePlace = () => {
 
   const placeUpdateSubmitHandler = event => {
     event.preventDefault();
-    console.log(formState);
   }
 
   if (!identifiedPlace) {
@@ -75,10 +74,8 @@ const UpdatePlace = () => {
         errorText="Your input was error"
         validators={[VALIDATOR_REQUIRE()]}
         onInput={inputHandler}
-        value={formState.inputs.title.value}
-        isValid={formState.inputs.title.isValid}
-        initialValue={identifiedPlace.title}
-        initialValidity={true}
+        initialValue={formState.inputs.title.value}
+        initialValidity={formState.inputs.title.isValid}
       />
       <Input
         id="description"
@@ -88,10 +85,8 @@ const UpdatePlace = () => {
         errorText="Need at least 5 char"
         validators={[VALIDATOR_MINLENGTH(5)]}
         onInput={inputHandler}
-        value={formState.inputs.description.value}
-        isValid={formState.inputs.description.isValid}
-        initialValue={identifiedPlace.description}
-        initialValidity={true}
+        initialValue={formState.inputs.description.value}
+        initialValidity={formState.inputs.description.isValid}
       />
       <Button type="submit" disabled={!formState.isValid}>
         UPDATE PLACE

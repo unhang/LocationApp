@@ -1,6 +1,6 @@
-import React, { useReducer, useEffect } from 'react';
+import React, {useEffect, useReducer} from 'react';
 
-import { validate } from '../../util/validators';
+import {validate} from '../../util/validators';
 import './Input.css';
 
 const inputReducer = (state, action) => {
@@ -8,8 +8,8 @@ const inputReducer = (state, action) => {
     case 'CHANGE':
       return {
         ...state,
-        value: action.val,
-        isValid: validate(action.val, action.validators)
+        value: action.value,
+        isValid: validate(action.value, action.validators)
       };
     case 'TOUCH':
       return {
@@ -27,18 +27,17 @@ const Input = props => {
     isValid: props.initialValidity || false,
     isTouched: false
   });
-
-  const { onInput, id } = props;
-  const { value, isValid } = inputState;
+  const {id, onInput} = props;
+  const {value, isValid} = inputState;
 
   useEffect(() => {
     onInput(id, value, isValid);
-  }, [id, onInput, value, isValid])
+  }, [id, value, isValid]);
 
   const changeHandler = event => {
     dispatch({
       type: 'CHANGE',
-      val: event.target.value,
+      value: event.target.value,
       validators: props.validators
     });
   }
@@ -48,6 +47,7 @@ const Input = props => {
       type: 'TOUCH'
     });
   }
+
   const element =
     props.element === 'input' ?
       (
@@ -66,7 +66,7 @@ const Input = props => {
           value={inputState.value}
           onChange={changeHandler}
           onBlur={touchHandler}
-        ></textarea>
+        />
       );
 
   return (
