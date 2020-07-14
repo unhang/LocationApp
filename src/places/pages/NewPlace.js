@@ -23,7 +23,6 @@ const NewPlace = () => {
     }
   }
   // const initialFormValidity = false;
-
   const [formState, inputHandler] = useForm( initialInput, false);
 
   const placeSubmitHandler = event => {
