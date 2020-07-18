@@ -8,7 +8,7 @@ const signUp = ({ email, password, name }) => {
       password,
       name,
     })
-    .then((res) => res)
+    .then((res) => res.data)
     .catch((error) => {
       console.log(error.response);
       return error.response;
@@ -21,11 +21,21 @@ const login = ({ email, password }) => {
       email,
       password,
     })
-    .then((res) => res)
+    .then((res) => res.data)
     .catch((error) => {
       console.log(error.response);
       return error.response;
     });
 };
 
-export { signUp, login };
+const getUsers = () => {
+  return axios
+    .get(`${API_ENDPOINT}/user`)
+    .then((res) => res.data)
+    .catch((error) => {
+      console.log(error.response);
+      return error.response;
+    });
+};
+
+export { signUp, login, getUsers };

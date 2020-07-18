@@ -39,15 +39,16 @@ const Auth = () => {
     const {
       inputs: { email, name, password },
     } = formState;
+
+    setIsLoading(true);
     if (isLoginMode) {
-      setIsLoading(true);
       const response = await signIn({
         email: email.value,
         password: password.value,
       });
 
-      if (response.data.message) {
-        console.log(response.data.message);
+      if (response.status && response.status !== 404) {
+        console.log(response.message);
         setError(
           response.data.message || "Something went wrong, please try again"
         );
@@ -55,7 +56,6 @@ const Auth = () => {
         login();
       }
     } else {
-      setIsLoading(true);
       const response = await signUp({
         email: email.value,
         password: password.value,
@@ -63,7 +63,7 @@ const Auth = () => {
       });
 
       if (response.data.message) {
-        console.log(response.data.message);
+        console.log(response?.message);
         setError(
           response.data.message || "Something went wrong, please try again"
         );
@@ -72,6 +72,7 @@ const Auth = () => {
         login();
       }
     }
+
     setIsLoading(false);
   };
 
