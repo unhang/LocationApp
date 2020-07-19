@@ -9,17 +9,18 @@ import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
 } from "../../shared/util/validators";
-import "./Auth.css";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/contexts/AuthContext";
 import { signUp, login as signIn } from "../../services/user.api";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import "./Auth.css";
+import { API_ENDPOINT } from "../../shared/util/constant";
 
 const Auth = () => {
-  const { login } = useContext(AuthContext);
+  const auth = useContext(AuthContext);
   const [isLoginMode, setLoginMode] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { error, isLoading, sendRequest, clearError } = useHttpClient();
   const [formState, inputHandler, setFormState] = useForm(
     {
       email: {
@@ -40,20 +41,24 @@ const Auth = () => {
       inputs: { email, name, password },
     } = formState;
 
-    setIsLoading(true);
     if (isLoginMode) {
-      const response = await signIn({
-        email: email.value,
-        password: password.value,
-      });
-
-      if (response.status && response.status !== 404) {
-        console.log(response.message);
-        setError(
-          response.data.message || "Something went wrong, please try again"
+      try {
+        console.log(isLoading);
+        const responseData = await sendRequest(
+          `${API_ENDPOINT}/user/login`,
+          "POST",
+          JSON.stringify({
+            email: email.value,
+            password: password.value,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
         );
-      } else {
-        login();
+        console.log(isLoading);
+        auth.login();
+      } catch (err) {
+        // console.log(err);
       }
     } else {
       const response = await signUp({
@@ -61,19 +66,7 @@ const Auth = () => {
         password: password.value,
         name: name.value,
       });
-
-      if (response.data.message) {
-        console.log(response?.message);
-        setError(
-          response.data.message || "Something went wrong, please try again"
-        );
-      } else {
-        setIsLoading(false);
-        login();
-      }
     }
-
-    setIsLoading(false);
   };
 
   const switchModeHandler = () => {
@@ -103,7 +96,7 @@ const Auth = () => {
   return (
     <Card className="authentication">
       {isLoading && <LoadingSpinner asOverlay />}
-      {error && <ErrorModal error={error} onClear={() => setError(null)} />}
+      {error && <ErrorModal error={error} onClear={clearError} />}
       <h2>Login Required</h2>
       <hr />
       <form onSubmit={submit}>
@@ -136,7 +129,7 @@ const Auth = () => {
           type="password"
           placeholder="password"
           errorText="Password is invalid"
-          validators={[VALIDATOR_MINLENGTH(6)]}
+          validators={[VALIDATOR_MINLENGTH(5)]}
           onInput={inputHandler}
         />
         <Button type="submit" disabled={!formState.isValid}>

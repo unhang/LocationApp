@@ -6,36 +6,20 @@ import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
-  // const [isLoading, setIsLoading] = useState(true);
   const [loadedUsers, setLoadedUsers] = useState();
-  // const [error, setError] = useState(null);
-
   const { error, isLoading, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
-    // const sendRequest = async () => {
-    //   try {
-    //     const response = await fetch(`${API_ENDPOINT}/user`);
-    //     const responseData = await response.json();
-    //     if (!response.ok) {
-    //       throw new Error(responseData.message);
-    //     }
-    //     setLoadedUsers(responseData.users);
-    //     console.log(responseData);
-    //     setIsLoading(false);
-    //   } catch (err) {
-    //     setIsLoading(false);
-    //     setError(err.message);
-    //   }
-    // };
-    console.log(error, isLoading,);
-    const send = async () => {
-      const response = await sendRequest(`${API_ENDPOINT}/user`);
-      setLoadedUsers(response.users);
+    console.log(error, isLoading);
+    const fetchUsers = async () => {
+      try {
+        const responseData = await sendRequest(`${API_ENDPOINT}/user`);
+        console.log(responseData);
+        setLoadedUsers(responseData.users);
+      } catch (err) {}
     };
-    send();
-
-  }, []);
+    fetchUsers();
+  }, [sendRequest]);
 
   return (
     <React.Fragment>

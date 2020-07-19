@@ -4,6 +4,7 @@ import {
   Route,
   Redirect,
   Switch,
+  useHistory,
 } from "react-router-dom";
 
 import Users from "./user/pages/Users";
@@ -14,13 +15,17 @@ import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import Auth from "./user/pages/Auth";
 import AuthContextProvider from "./shared/contexts/AuthContext";
 import "./App.css";
-
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    JSON.parse(localStorage.getItem("isLoggedIn"))
+  );
+
   const login = useCallback(() => {
+    localStorage.setItem("isLoggedIn", true);
     setIsLoggedIn(true);
   }, []);
   const logout = useCallback(() => {
+    localStorage.setItem("isLoggedIn", false);
     setIsLoggedIn(false);
   }, []);
 

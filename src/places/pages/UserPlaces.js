@@ -1,39 +1,38 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-import PlaceList from '../components/PlaceList';
+import PlaceList from "../components/PlaceList";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+import { API_ENDPOINT } from "../../shared/util/constant";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
-const DUMMY_PLACES = [
-  {
-    id: 'p1',
-    title: 'Landmark 81',
-    description: 'The most famous sky scraper in Vietnam',
-    imageUrl: 'https://kinhdoanhdiaoc.net/wp-content/uploads/2017/06/landmark-81-1.jpg',
-    address: '20 W 34th St, New York, NY 1001',
-    location: {
-      lat: 10.7941662,
-      lng: 106.7186276
-    },
-    creator: 'u1'
-  },
-  {
-    id: 'p2',
-    title: 'Landmark 81',
-    description: 'The most famous sky scraper in Vietnam',
-    imageUrl: 'https://kinhdoanhdiaoc.net/wp-content/uploads/2017/06/landmark-81-1.jpg',
-    address: '20 W 34th St, New York, NY 1001',
-    location: {
-      lat: 10.7941662,
-      lng: 106.7186276
-    },
-    creator: 'u2'
-  }
-];
-
-const UserPlaces = props => {
+const UserPlaces = (props) => {
   const userId = useParams().userId;
-  const loadedPlaces = DUMMY_PLACES.filter(place => place.creator === userId);
-  return <PlaceList items={loadedPlaces} />
-}
+  const [loadedPlaces, setLoadedPlaces] = useState([]);
+  const { sendRequest, error, clearError, isLoading } = useHttpClient();
+
+  useEffect(() => {
+    const fetchUserPlaces = async () => {
+      try {
+        const responseData = await sendRequest(
+          `${API_ENDPOINT}/place/user/${userId}`
+        );
+        console.log(responseData);
+        setLoadedPlaces(responseData.places);
+      } catch (err) {}
+    };
+
+    fetchUserPlaces();
+  }, [sendRequest, userId]);
+
+  return (
+    <React.Fragment>
+      {isLoading && <LoadingSpinner asOverlay />}
+      {error && <ErrorModal onClear={clearError} />}
+      {loadedPlaces.length !== 0 && <PlaceList items={loadedPlaces} />}
+    </React.Fragment>
+  );
+};
 
 export default UserPlaces;

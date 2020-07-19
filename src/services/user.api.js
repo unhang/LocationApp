@@ -33,7 +33,7 @@ const getUsers = () => {
     .get(`${API_ENDPOINT}/user`)
     .then((res) => res.data)
     .catch((error) => {
-      console.log(error.response);
+
       return error.response;
     });
 };
