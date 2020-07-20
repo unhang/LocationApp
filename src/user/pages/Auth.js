@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
 
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
@@ -11,7 +12,7 @@ import {
 } from "../../shared/util/validators";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/contexts/AuthContext";
-import { signUp, login as signIn } from "../../services/user.api";
+import { signUp } from "../../services/user.api";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import "./Auth.css";
@@ -34,6 +35,7 @@ const Auth = () => {
     },
     false
   );
+  const history = useHistory();
 
   const submit = async (e) => {
     e.preventDefault();
@@ -43,7 +45,7 @@ const Auth = () => {
 
     if (isLoginMode) {
       try {
-        console.log(isLoading);
+
         const responseData = await sendRequest(
           `${API_ENDPOINT}/user/login`,
           "POST",
@@ -55,11 +57,9 @@ const Auth = () => {
             "Content-Type": "application/json",
           }
         );
-        console.log(isLoading);
-        auth.login();
-      } catch (err) {
-        // console.log(err);
-      }
+        auth.login(responseData.user.id);
+        history.push("/");
+      } catch (err) {}
     } else {
       const response = await signUp({
         email: email.value,

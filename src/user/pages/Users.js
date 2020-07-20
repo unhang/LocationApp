@@ -14,7 +14,6 @@ const Users = () => {
     const fetchUsers = async () => {
       try {
         const responseData = await sendRequest(`${API_ENDPOINT}/user`);
-        console.log(responseData);
         setLoadedUsers(responseData.users);
       } catch (err) {}
     };

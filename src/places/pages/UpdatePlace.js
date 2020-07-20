@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
@@ -18,6 +18,7 @@ const UpdatePlace = () => {
   const [loadedPlace, setLoadedPlace] = useState(null);
   const { isLoading, sendRequest, error, clearError } = useHttpClient();
   const placeId = useParams().placeId;
+  const history = useHistory();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -57,26 +58,22 @@ const UpdatePlace = () => {
     fetchPlace();
   }, [placeId, sendRequest]);
 
-  const placeUpdateSubmitHandler = (event) => {
+  const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
-    const patchPlace = async () => {
-      try {
-        console.log(formState);
-        const responseData = await sendRequest(
-          `${API_ENDPOINT}/place/${placeId}`,
-          "PATCH",
-          JSON.stringify({
-            title: formState.inputs.title.value,
-            description: formState.inputs.description.value,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
-        );
-        console.log(responseData.place);
-      } catch (err) {}
-    };
-    patchPlace();
+    try {
+      await sendRequest(
+        `${API_ENDPOINT}/place/${placeId}`,
+        "PATCH",
+        JSON.stringify({
+          title: formState.inputs.title.value,
+          description: formState.inputs.description.value,
+        }),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      history.goBack();
+    } catch (err) {}
   };
 
   if (error) {

@@ -4,7 +4,6 @@ import {
   Route,
   Redirect,
   Switch,
-  useHistory,
 } from "react-router-dom";
 
 import Users from "./user/pages/Users";
@@ -19,13 +18,18 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(
     JSON.parse(localStorage.getItem("isLoggedIn"))
   );
-
-  const login = useCallback(() => {
+  const [userId, setUserId] = useState(
+    JSON.parse(localStorage.getItem("userId"))
+  );
+  const login = useCallback((loggedInId) => {
     localStorage.setItem("isLoggedIn", true);
+    localStorage.setItem("userId", JSON.stringify(loggedInId));
+    setUserId(loggedInId);
     setIsLoggedIn(true);
   }, []);
   const logout = useCallback(() => {
     localStorage.setItem("isLoggedIn", false);
+    localStorage.removeItem("userId");
     setIsLoggedIn(false);
   }, []);
 
@@ -37,14 +41,14 @@ const App = () => {
         <Route path="/" exact>
           <Users />
         </Route>
-        <Route path="/:userId/places" exact>
-          <UserPlaces />
-        </Route>
         <Route path="/places/new" exact>
           <NewPlace />
         </Route>
         <Route path="/places/:placeId" exact>
           <UpdatePlace />
+        </Route>
+        <Route path="/:userId/places" exact>
+          <UserPlaces />
         </Route>
         <Route path="/auth" exact>
           <Auth />
@@ -70,7 +74,7 @@ const App = () => {
   }
 
   return (
-    <AuthContextProvider value={{ isLoggedIn, login, logout }}>
+    <AuthContextProvider value={{ isLoggedIn, login, logout, userId }}>
       <Router>
         <MainNavigation />
         <main>{routes}</main>

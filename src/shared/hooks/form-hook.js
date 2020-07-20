@@ -51,7 +51,6 @@ const useForm = (initialInputs, initialFormValidity) => {
   }, []);
 
   const setFormData = useCallback((inputData, formValidity) => {
-    console.log(inputData, formValidity);
     dispatch({
       type: 'SET_DATA',
       inputs: inputData,
